@@ -30,7 +30,7 @@ struct Bi{
 };
 vector<ui32> g_unhash_id;
 vector<ui32> g_node_data[THREAD_NUM];
-vector<ui32> g_graph_data[THREAD_NUM];
+vector<ui32> g_edge_data[THREAD_NUM];
 
 
 /**
@@ -57,7 +57,7 @@ void ReadJob(Bi& bi){
     const char* ed = g_buf + bi.r;
     char tmp[16];
     g_node_data[bi.tid].reserve(1000000);
-    g_graph_data[bi.tid].reserve(500000);
+    g_edge_data[bi.tid].reserve(500000);
     ui32 line[3];
     while(bg < ed){
         for(ui32 & ii : line){
@@ -72,7 +72,7 @@ void ReadJob(Bi& bi){
         if(line[2] != 0){
             g_node_data[bi.tid].emplace_back(line[0]);
             g_node_data[bi.tid].emplace_back(line[1]);
-            g_graph_data[bi.tid].emplace_back(line[2]);
+            g_edge_data[bi.tid].emplace_back(line[2]);
         }
     }
 }
@@ -173,7 +173,7 @@ void BuildGraph(){
         for(ui32 j = 0, k = 0; j < g_node_data[i].size(); j+=2, ++k){
             from = hash_id[g_node_data[i][j]];
             to = hash_id[g_node_data[i][j+1]];
-            money = g_graph_data[i][k];
+            money = g_edge_data[i][k];
             g_graph[g_head[from] + curlen[from]].to = to;
             g_graph[g_head[from] + curlen[from]++].money = money;
             g_ind[to]++;
